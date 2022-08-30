@@ -11,7 +11,7 @@ jobs:
   build:
     working_directory: ~/repo
     docker:
-      - image: circleci/node:12.18.2-browsers
+      - image: circleci/node:latest
     steps:
       - checkout
       - restore_cache:
@@ -49,12 +49,12 @@ jobs:
               aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
             fi
 workflows:
-  'Linting':
+  'Lint':
     jobs:
-      - lint:
+      - build:
           filters:
             branches:
-              ignore: production
+              ignore: /.production, main/
   'Build and deploy to AWS-S3 bucket 2':
     jobs:
       - build:
