@@ -41,7 +41,7 @@ jobs:
               aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
             fi
 workflows:
-  'Build & Deploy':
+  'Production build and deploy to AWS S3':
     jobs:
       - build:
           filters:
