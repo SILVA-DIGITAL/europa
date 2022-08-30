@@ -49,9 +49,9 @@ jobs:
               aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
             fi
 workflows:
-  'Lint':
+  'Linting':
     jobs:
-      - build:
+      - lint:
           filters:
             branches:
               ignore: production
