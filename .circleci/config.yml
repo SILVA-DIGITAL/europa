@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/repo
     docker:
-      - image: circleci/node:12.18.2-browsers
+      - image: circleci/node:latest
     steps:
       - checkout
       - restore_cache:
