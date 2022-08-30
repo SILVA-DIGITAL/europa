@@ -1,5 +1,13 @@
 version: 2.1
 jobs:
+  lint:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: yarn add eslint
+      - run: yarn lint
   build:
     working_directory: ~/repo
     docker:
@@ -41,20 +49,12 @@ jobs:
               aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
             fi
 workflows:
-  'Build and deploy to AWS-S3 bucket 1':
+  'Lint':
     jobs:
       - build:
           filters:
             branches:
-              only:
-                - production
-      - deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - production
+              ignore: production
   'Build and deploy to AWS-S3 bucket 2':
     jobs:
       - build:
