@@ -54,7 +54,7 @@ workflows:
       - build:
           filters:
             branches:
-              ignore: /.production, main/
+              ignore: main
   'Build and deploy to AWS-S3 bucket 2':
     jobs:
       - build:
