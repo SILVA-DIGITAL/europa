@@ -49,13 +49,13 @@ jobs:
               aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
             fi
 workflows:
-  'ESLint run':
+  'ESLint':
     jobs:
       - lint:
           filters:
             branches:
               ignore: Procduction
-  'Build and deploy to AWS-S3 bucket 2':
+  'Build and deploy to AWS S3 bucket':
     jobs:
       - build:
           filters:
