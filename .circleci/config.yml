@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  slack: circleci/slack@4.10.1
 jobs:
   lint:
     docker:
@@ -8,6 +10,13 @@ jobs:
       - checkout
       - run: npm install eslint
       - run: npm run lint
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
   build:
     working_directory: ~/repo
     docker:
