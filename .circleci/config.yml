@@ -39,6 +39,12 @@ jobs:
             if [ $CIRCLE_BRANCH = 'production' ]; then
               yarn build
             fi
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
       - persist_to_workspace:
           root: .
           paths:
@@ -48,12 +54,6 @@ jobs:
     docker:
       - image: innovatorjapan/awscli:latest
     steps:
-      - slack/notify:
-          event: pass
-          template: basic_success_1
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
       - attach_workspace:
           at: .
       - run:
@@ -74,6 +74,8 @@ workflows:
   'Build and deploy to AWS S3 bucket':
     jobs:
       - build:
+          context:
+            - genesis-slack
           filters:
             branches:
               only:
