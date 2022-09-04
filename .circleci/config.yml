@@ -56,17 +56,12 @@ jobs:
             if [ $CIRCLE_BRANCH = 'production' ]; then
               aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
             fi
-      - slack/notify:
-          event: pass
-          template: basic_success_1
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
 workflows:
   'ESLint':
     jobs:
       - lint:
-          context: genesis-slack
+          context:
+            - genesis-slack
           filters:
             branches:
               ignore: Procduction
@@ -78,7 +73,6 @@ workflows:
               only:
                 - production
       - deploy:
-          context: genesis-slack
           requires:
             - build
           filters:
