@@ -58,7 +58,7 @@ jobs:
             fi
       - slack/notify:
           event: pass
-          template: success_tagged_deploy_1
+          template: basic_success_1
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -78,9 +78,9 @@ workflows:
               only:
                 - production
       - deploy:
+          context: genesis-slack
           requires:
             - build
-          context: genesis-slack
           filters:
             branches:
               only:
