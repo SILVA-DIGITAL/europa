@@ -70,7 +70,7 @@ workflows:
             - genesis-slack
           filters:
             branches:
-              ignore: Procduction
+              ignore: production
   'Build and deploy to AWS S3 bucket':
     jobs:
       - build:
