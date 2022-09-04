@@ -10,6 +10,12 @@ jobs:
       - checkout
       - run: npm install eslint
       - run: npm run lint
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
   build:
     working_directory: ~/repo
     docker:
@@ -58,7 +64,6 @@ workflows:
           filters:
             branches:
               ignore: Procduction
-
   'Build and deploy to AWS S3 bucket':
     jobs:
       - build:
