@@ -1,11 +1,11 @@
 version: 2.1
 orbs:
   slack: circleci/slack@4.10.1
+  aws-cli: circleci/aws-cli@0.1.18
 jobs:
   lint:
     docker:
       - image: circleci/node:latest
-      - aws-cli: circleci/aws-cli@0.1.18
     working_directory: ~/repo
     steps:
       - checkout
@@ -40,7 +40,6 @@ jobs:
             if [ $CIRCLE_BRANCH = 'production' ]; then
               yarn build
             fi
-      - run: echo "deploy my app"
       - slack/notify:
           event: fail
           mentions: '@EngineeringTeam'
@@ -66,6 +65,7 @@ jobs:
   #             aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
   #           fi
   deploy:
+    working_directory: ~/repo
     executor: aws-cli/default
     steps:
       - attach_workspace:
