@@ -68,9 +68,9 @@ jobs:
           arguments: |
             --acl public-read \
             --cache-control "max-age=86400"
-          aws-access-key-id: AKIA35QXOIZZK66EJEOG
-          aws-region: eu-west-1
-          aws-secret-access-key: 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
+          aws-access-key-id: AWS_ACCESS_KEY_ID_BLUE
+          aws-region: AWS_REGION_BLUE
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_BLUE
           from: .
           to: 's3://sd.genesis'
       - aws-s3/copy:
@@ -97,7 +97,7 @@ workflows:
                 - production
       - deploy:
           context:
-            - genesis-slack
+            - genesis-s3
           requires:
             - build
           filters:
