@@ -39,7 +39,6 @@ jobs:
             if [ $CIRCLE_BRANCH = 'production' ]; then
               yarn build
             fi
-      - run: echo "deploy my app"
       - slack/notify:
           event: fail
           mentions: '@EngineeringTeam'
@@ -64,12 +63,6 @@ jobs:
             if [ $CIRCLE_BRANCH = 'production' ]; then
               aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
             fi
-      - slack/notify:
-          event: pass
-          template: basic_success_1
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
 workflows:
   'ESLint':
     jobs:
