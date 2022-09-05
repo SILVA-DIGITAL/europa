@@ -51,7 +51,6 @@ jobs:
           root: .
           paths:
             - .
-      # deploy:
       #   working_directory: ~/repo
       #   docker:
       #     - image: innovatorjapan/awscli:latest
@@ -64,6 +63,7 @@ jobs:
       #           if [ $CIRCLE_BRANCH = 'production' ]; then
       #             aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
       #           fi
+    deploy:
       - aws-s3/sync:
           arguments: |
             --acl public-read \
