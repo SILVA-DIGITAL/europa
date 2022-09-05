@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
   slack: circleci/slack@4.10.1
-  aws-s3: circleci/aws-s3@3.0
 jobs:
   lint:
     docker:
@@ -17,70 +16,60 @@ jobs:
       - slack/notify:
           event: fail
           template: basic_fail_1
-  # build:
-  #   working_directory: ~/repo
-  #   docker:
-  #     - image: circleci/node:latest
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys:
-  #           - v1-dependencies-{{ checksum "yarn.lock" }}
-  #           - v1-dependencies-
-  #     - run:
-  #         name: Install dependencies
-  #         command: npm install
-  #     - save_cache:
-  #         key: v1-dependencies-{{ checksum "yarn.lock" }}
-  #         paths:
-  #           - node_modules
-  #     - run:
-  #         name: Build
-  #         command: |
-  #           if [ $CIRCLE_BRANCH = 'production' ]; then
-  #             yarn build
-  #           fi
-  #     - slack/notify:
-  #         event: fail
-  #         mentions: '@EngineeringTeam'
-  #         template: basic_fail_1
-  #     - slack/notify:
-  #         event: pass
-  #         template: success_tagged_deploy_1
-  #     - persist_to_workspace:
-  #         root: .
-  #         paths:
-  #           - .
-  #   working_directory: ~/repo
-  #   docker:
-  #     - image: innovatorjapan/awscli:latest
-  #   steps:
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: Deploy
-  #         command: |
-  #           if [ $CIRCLE_BRANCH = 'production' ]; then
-  #             aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
-  #           fi
-  deploy:
+  build:
+    working_directory: ~/repo
     docker:
-      - image: 'cimg/python:3.6'
+      - image: circleci/node:latest
     steps:
       - checkout
-      - aws-s3/sync:
-          arguments: |
-            --acl public-read \
-            --cache-control "max-age=86400"
-          aws-access-key-id: AWS_ACCESS_KEY_ID_BLUE
-          aws-region: AWS_REGION_BLUE
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_BLUE
-          from: .
-          to: 's3://sd.genesis'
-      - aws-s3/copy:
-          arguments: '--dryrun'
-          from: .
-          to: 's3://sd.genesis'
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-
+      - run:
+          name: Install dependencies
+          command: npm install
+      - save_cache:
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: Build
+          command: |
+            if [ $CIRCLE_BRANCH = 'production' ]; then
+              yarn build
+            fi
+      - run: echo "deploy my app"
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  deploy:
+    working_directory: ~/repo
+    docker:
+      - image: innovatorjapan/awscli:latest
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy
+          command: |
+            if [ $CIRCLE_BRANCH = 'production' ]; then
+              aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
+            fi
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
 workflows:
   'ESLint':
     jobs:
@@ -92,18 +81,18 @@ workflows:
               ignore: production
   'Build and deploy to AWS S3 bucket':
     jobs:
-      # - build:
-      #     context:
-      #       - genesis-slack
-      #     filters:
-      #       branches:
-      #         only:
-      #           - production
+      - build:
+          context:
+            - genesis-slack
+          filters:
+            branches:
+              only:
+                - production
       - deploy:
           context:
-            - genesis-s3
-          # requires:
-          #   - build
+            - genesis-slack
+          requires:
+            - build
           filters:
             branches:
               only:
