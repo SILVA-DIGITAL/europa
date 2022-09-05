@@ -5,6 +5,7 @@ jobs:
   lint:
     docker:
       - image: circleci/node:latest
+      - aws-cli: circleci/aws-cli@0.1.18
     working_directory: ~/repo
     steps:
       - checkout
@@ -51,19 +52,29 @@ jobs:
           root: .
           paths:
             - .
+  # deploy:
+  #   working_directory: ~/repo
+  #   docker:
+  #     - image: innovatorjapan/awscli:latest
+  #   steps:
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: Deploy
+  #         command: |
+  #           if [ $CIRCLE_BRANCH = 'production' ]; then
+  #             aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
+  #           fi
   deploy:
-    working_directory: ~/repo
-    docker:
-      - image: innovatorjapan/awscli:latest
+    executor: aws-cli/default
     steps:
       - attach_workspace:
           at: .
+      - aws-cli/setup:
+          profile-name: default
       - run:
           name: Deploy
-          command: |
-            if [ $CIRCLE_BRANCH = 'production' ]; then
-              aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
-            fi
+          command: aws s3 sync build s3://sd.genesis --delete
 workflows:
   'ESLint':
     jobs:
