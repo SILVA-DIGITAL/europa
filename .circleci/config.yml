@@ -17,53 +17,57 @@ jobs:
       - slack/notify:
           event: fail
           template: basic_fail_1
-  build:
-    working_directory: ~/repo
+  # build:
+  #   working_directory: ~/repo
+  #   docker:
+  #     - image: circleci/node:latest
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys:
+  #           - v1-dependencies-{{ checksum "yarn.lock" }}
+  #           - v1-dependencies-
+  #     - run:
+  #         name: Install dependencies
+  #         command: npm install
+  #     - save_cache:
+  #         key: v1-dependencies-{{ checksum "yarn.lock" }}
+  #         paths:
+  #           - node_modules
+  #     - run:
+  #         name: Build
+  #         command: |
+  #           if [ $CIRCLE_BRANCH = 'production' ]; then
+  #             yarn build
+  #           fi
+  #     - slack/notify:
+  #         event: fail
+  #         mentions: '@EngineeringTeam'
+  #         template: basic_fail_1
+  #     - slack/notify:
+  #         event: pass
+  #         template: success_tagged_deploy_1
+  #     - persist_to_workspace:
+  #         root: .
+  #         paths:
+  #           - .
+  #   working_directory: ~/repo
+  #   docker:
+  #     - image: innovatorjapan/awscli:latest
+  #   steps:
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: Deploy
+  #         command: |
+  #           if [ $CIRCLE_BRANCH = 'production' ]; then
+  #             aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
+  #           fi
+  deploy:
     docker:
-      - image: circleci/node:latest
+      - image: 'cimg/python:3.6'
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
-            - v1-dependencies-
-      - run:
-          name: Install dependencies
-          command: npm install
-      - save_cache:
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
-      - run:
-          name: Build
-          command: |
-            if [ $CIRCLE_BRANCH = 'production' ]; then
-              yarn build
-            fi
-      - slack/notify:
-          event: fail
-          mentions: '@EngineeringTeam'
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-      #   working_directory: ~/repo
-      #   docker:
-      #     - image: innovatorjapan/awscli:latest
-      #   steps:
-      #     - attach_workspace:
-      #         at: .
-      #     - run:
-      #         name: Deploy
-      #         command: |
-      #           if [ $CIRCLE_BRANCH = 'production' ]; then
-      #             aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
-      #           fi
-    deploy:
       - aws-s3/sync:
           arguments: |
             --acl public-read \
@@ -88,18 +92,18 @@ workflows:
               ignore: production
   'Build and deploy to AWS S3 bucket':
     jobs:
-      - build:
-          context:
-            - genesis-slack
-          filters:
-            branches:
-              only:
-                - production
+      # - build:
+      #     context:
+      #       - genesis-slack
+      #     filters:
+      #       branches:
+      #         only:
+      #           - production
       - deploy:
           context:
             - genesis-s3
-          requires:
-            - build
+          # requires:
+          #   - build
           filters:
             branches:
               only:
