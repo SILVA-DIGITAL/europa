@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   slack: circleci/slack@4.10.1
-  aws-cli: circleci/aws-cli@0.1.18
+  aws-s3: circleci/aws-s3@3.0
 jobs:
   lint:
     docker:
@@ -51,30 +51,32 @@ jobs:
           root: .
           paths:
             - .
-  # deploy:
-  #   working_directory: ~/repo
-  #   docker:
-  #     - image: innovatorjapan/awscli:latest
-  #   steps:
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: Deploy
-  #         command: |
-  #           if [ $CIRCLE_BRANCH = 'production' ]; then
-  #             aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
-  #           fi
-  deploy:
-    working_directory: ~/repo
-    executor: aws-cli/default
-    steps:
-      - attach_workspace:
-          at: .
-      - aws-cli/setup:
-          profile-name: default
-      - run:
-          name: Deploy
-          command: aws s3 sync build s3://sd.genesis --delete
+      # deploy:
+      #   working_directory: ~/repo
+      #   docker:
+      #     - image: innovatorjapan/awscli:latest
+      #   steps:
+      #     - attach_workspace:
+      #         at: .
+      #     - run:
+      #         name: Deploy
+      #         command: |
+      #           if [ $CIRCLE_BRANCH = 'production' ]; then
+      #             aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
+      #           fi
+      - aws-s3/sync:
+          arguments: |
+            --acl public-read \
+            --cache-control "max-age=86400"
+          aws-access-key-id: AKIA35QXOIZZK66EJEOG
+          aws-region: eu-west-1
+          aws-secret-access-key: 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
+          from: .
+          to: 's3://sd.genesis'
+      - aws-s3/copy:
+          arguments: '--dryrun'
+          from: .
+          to: 's3://sd.genesis'
 workflows:
   'ESLint':
     jobs:
