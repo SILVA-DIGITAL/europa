@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   slack: circleci/slack@4.10.1
+  jira: circleci/jira@1.3.1
 jobs:
   lint:
     docker:
@@ -39,6 +40,10 @@ jobs:
             if [ $CIRCLE_BRANCH = 'production' ]; then
               yarn build
             fi
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
       - slack/notify:
           event: fail
           mentions: '@EngineeringTeam'
@@ -47,10 +52,7 @@ jobs:
           event: pass
           template: basic_success_1
           mentions: '@EngineeringTeam'
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
+      - jira/notify
   deploy:
     working_directory: ~/repo
     docker:
