@@ -86,7 +86,7 @@ workflows:
                 - production
           post-steps:
             - jira/notify:
-                environment_type: production
+                environment_type: deployment
                 job_type: production
       - deploy:
           context:
