@@ -68,7 +68,7 @@ jobs:
             if [ $CIRCLE_BRANCH = 'production' ]; then
               aws s3 sync build s3://sd.genesis --delete --exact-timestamps;
             fi
-
+      - jira/notify
 workflows:
   'ESLint':
     jobs:
