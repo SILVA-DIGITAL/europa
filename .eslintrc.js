@@ -49,6 +49,10 @@ module.exports = {
     'no-return-assign': 'off',
     'react/jsx-props-no-spreading': 'off',
     'object-curly-newline': 'off',
+    'react/no-unknown-property': [
+      'error',
+      { ignore: ['object', 'attach', 'args', 'rotation'] },
+    ],
     semi: ['error', 'never'],
   },
   settings: {
