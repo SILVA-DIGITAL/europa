@@ -2,6 +2,7 @@
 import React from 'react'
 import { Router, Switch, Route } from 'wouter'
 import Loader from '../components/Loader'
+// import '../components/Loader'
 
 // import { routes } from '../constants/routes'
 

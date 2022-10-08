@@ -38,6 +38,8 @@ module.exports = {
   },
   plugins: ['react', 'react-hooks', 'prettier'],
   rules: {
+    'import/no-named-as-default': 0,
+    'import/prefer-default-export': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/display-name': 'off',
     'react/prop-types': 'off',
