@@ -73,7 +73,7 @@ workflows:
     jobs:
       - lint:
           context:
-            - genesis-slack
+            - europa-slack
           filters:
             branches:
               ignore: production
@@ -81,14 +81,14 @@ workflows:
     jobs:
       - build:
           context:
-            - genesis-slack
+            - europa-slack
           filters:
             branches:
               only:
                 - production
       - deploy:
           context:
-            - genesis-slack
+            - europa-slack
           requires:
             - build
           filters:
