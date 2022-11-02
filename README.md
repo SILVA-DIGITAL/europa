@@ -5,3 +5,5 @@
 # Stack
 
 # Installation
+
+# LICENSE
