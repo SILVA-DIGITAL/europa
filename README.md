@@ -5,16 +5,18 @@
 # Features
 
 - [x] Trying to implement FBO particles system
+
 # Stack
 
 ![Reactv18](https://img.shields.io/badge/-React%20v18-%23232F3E?logo=React)
 ![ReactThreeFiber](https://img.shields.io/badge/-React%20Three%20Fiber-%23232F3E?logo=Three.js)
+
 # Installation
 
 ```
 yarn build - create-react-app build
 yarn start - create-react-app start
 yarn lint - lint project
-yarn  - lint project
-yarn export - Export t
+yarn lint:fix - fix lint errors
+yarn clearn - delete node modules
 ```
